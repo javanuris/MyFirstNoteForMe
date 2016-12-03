@@ -6,27 +6,35 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     private ListView listView;
-    private String[] arr = {"1", "2" , "3"};
-    private ArrayAdapter<String> arrayAdapter;
+    private ArrayAdapter<ToDoDocument> arrayAdapter;
+    private Intent intent;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         listView = (ListView)findViewById(R.id.main_list_view);
-        arrayAdapter = new ArrayAdapter<String>(MainActivity.this ,R.layout.list_item_shower , arr );
-        listView.setAdapter(arrayAdapter);
+        arrayAdapter = new ArrayAdapter<ToDoDocument>(MainActivity.this ,R.layout.list_item_shower ,AppContex.getToDoDocuments());
+
+        listView.setOnItemSelectedListener(new OnClickItem());
+        intent = new Intent(this , ItemDetail.class);
     }
 
-    private void openItemWhichChosen(){
-        Intent intent = new Intent(this ,ItemDetail.class);
-        startActivity(intent);
-
+    @Override
+    protected void onStart() {
+        super.onStart();
+        listView.setAdapter(arrayAdapter);
     }
 
     @Override
@@ -38,14 +46,34 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-switch (item.getItemId()){
+        switch (item.getItemId()){
     case R.id.add:{
-openItemWhichChosen();
+     Bundle bundle = new Bundle();
+        bundle.putInt(AppContex.ACTION_TYPE,AppContex.NEW_DOCUMENT);
+        intent.putExtras(bundle);
+        startActivity(intent);
         return true;
     }
     default:
         break;
 }
         return super.onOptionsItemSelected(item);
+    }
+
+    class OnClickItem implements AdapterView.OnItemSelectedListener{
+
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            Bundle bundle = new Bundle();
+            bundle.putInt(AppContex.ACTION_TYPE,AppContex.DOCUMENT_UPDATE);
+            bundle.putInt(AppContex.DOC_INDEX,((ToDoDocument)parent.getAdapter().getItem(position)).getNumber());
+            intent.putExtras(bundle);
+            startActivity(intent);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
     }
 }
