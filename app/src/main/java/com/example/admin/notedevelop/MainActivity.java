@@ -18,23 +18,26 @@ public class MainActivity extends AppCompatActivity {
     private ListView listView;
     private ArrayAdapter<ToDoDocument> arrayAdapter;
     private Intent intent;
-
+    private CustomAdapter customAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         listView = (ListView)findViewById(R.id.main_list_view);
-        arrayAdapter = new ArrayAdapter<ToDoDocument>(MainActivity.this ,R.layout.list_item_shower ,AppContex.getToDoDocuments());
 
-        listView.setOnItemSelectedListener(new OnClickItem());
         intent = new Intent(this , ItemDetail.class);
+        listView.setOnItemClickListener(new OnClickItem());
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        listView.setAdapter(arrayAdapter);
+        customAdapter = new CustomAdapter(this , AppContex.getToDoDocuments());
+        listView.setAdapter(customAdapter);
+        //arrayAdapter = new ArrayAdapter<ToDoDocument>(MainActivity.this ,R.layout.item_adapter_custom ,AppContex.getToDoDocuments());
+       // listView.setAdapter(arrayAdapter);
     }
 
     @Override
@@ -60,20 +63,15 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    class OnClickItem implements AdapterView.OnItemSelectedListener{
+    class OnClickItem implements AdapterView.OnItemClickListener{
 
         @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Bundle bundle = new Bundle();
             bundle.putInt(AppContex.ACTION_TYPE,AppContex.DOCUMENT_UPDATE);
             bundle.putInt(AppContex.DOC_INDEX,((ToDoDocument)parent.getAdapter().getItem(position)).getNumber());
             intent.putExtras(bundle);
             startActivity(intent);
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-
         }
     }
 }

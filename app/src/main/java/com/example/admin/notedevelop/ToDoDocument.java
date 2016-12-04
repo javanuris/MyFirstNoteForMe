@@ -6,7 +6,7 @@ import java.util.Date;
 /**
  * Created by Admin on 03.12.2016.
  */
-public class ToDoDocument implements Serializable{
+public class ToDoDocument implements Serializable ,Comparable<ToDoDocument>{
 
     private String name;
     private String content;
@@ -57,5 +57,10 @@ public class ToDoDocument implements Serializable{
 
     public void setNumber(int number) {
         this.number = number;
+    }
+
+    @Override
+    public int compareTo(ToDoDocument another) {
+        return 0;
     }
 }
